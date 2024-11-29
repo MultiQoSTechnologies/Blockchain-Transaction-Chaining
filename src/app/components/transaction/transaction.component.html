@@ -1,0 +1,87 @@
+<div class="container">
+  <!-- Header Section -->
+  <div class="header">
+    <h1>Blockchain Chain Representation</h1>
+
+    <!-- Connect Wallet Button -->
+    <button (click)="connectWallet()" *ngIf="!walletConnected" class="btn-connect">
+      Connect Wallet
+    </button>
+
+    <!-- Wallet Info -->
+    <div *ngIf="walletConnected" class="wallet-info">
+      <p><strong>Connected Wallet:</strong> {{ walletAddress }}</p>
+      <p>
+        <strong>Wallet Balance:</strong>
+        {{ walletBalance | number: '1.2-2' }} {{ walletBalance ? 'ETH' : '' }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Transaction Form (Visible when wallet is connected) -->
+  <form (ngSubmit)="sendTransaction()" *ngIf="walletConnected" class="transaction-form">
+    <div class="form-group">
+      <label for="toAddress">Recipient Address:</label>
+      <input
+        [(ngModel)]="toAddress"
+        id="toAddress"
+        name="toAddress"
+        placeholder="Enter recipient address"
+        required
+        type="text"
+      />
+      <div *ngIf="!toAddress && submitted" class="error-message">Address is required!</div>
+    </div>
+
+    <div class="form-group">
+      <label for="amount">Amount (ETH):</label>
+      <input
+        [(ngModel)]="amount"
+        id="amount"
+        name="amount"
+        placeholder="Enter amount in ETH"
+        required
+        type="number"
+      />
+      <div *ngIf="!amount && submitted" class="error-message">Amount is required!</div>
+    </div>
+
+    <button class="btn-submit" type="submit">Send Transaction</button>
+  </form>
+
+  <!-- Blockchain Chain Section -->
+  <div *ngIf="chain.length > 0" class="blockchain-chain">
+    <h2>Blockchain Data</h2>
+
+    <!-- Blockchain Blocks -->
+    <div #scrollContainer class="blocks">
+      <div *ngFor="let block of chain; let i = index" class="block">
+        <!-- Block Header -->
+        <div class="block-header">
+          <h3>Block Hash: {{ block.blockHash }}</h3>
+          <p><strong>Previous Hash:</strong> {{ block.previousHash }}</p>
+          <p *ngIf="block.nextHash"><strong>Next Hash:</strong> {{ block.nextHash }}</p>
+        </div>
+
+        <!-- Left Connector -->
+        <div class="connector-left"></div>
+
+        <!-- Transactions in the Block -->
+        <div class="transactions">
+          <h4>Transactions:</h4>
+          <ul>
+            <li *ngFor="let tx of block.transactions">
+              <p><strong>Transaction Hash:</strong> {{ tx.transactionHash }}</p>
+              <p><strong>From:</strong> {{ tx.from }}</p>
+              <p><strong>To:</strong> {{ tx.to }}</p>
+              <p><strong>Value:</strong> {{ tx.value }} ETH</p>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Right Connector (only if not the last block) -->
+        <div *ngIf="i !== chain.length - 1" class="connector-right"></div>
+      </div>
+    </div>
+  </div>
+</div>
